@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+
+  <title>visreg</title>
+  <meta name="description" content="visreg: An R package for the visualization of regression models">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <script type="text/javascript" src="js/mathjax.config.js"></script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</head>
+
+
+  <body>
+
+    <header>
+  <div id="site-wrapper">
+    <a id="site-title" href="index.html">visreg</a>
+    <span class="version"> 2.7.0.1 </span>
+    <div id="site-description">
+      An R package for the visualization of regression models
+    </div>
+  </div>
+</header>
+
+
+    <div id="wrapper">
+      <div id="sideBar">
+  
+  <ul> <h3>Basic framework</h3>
+    <li><a href="basic.html">Getting started</a></li>
+    <li><a href="contrast.html">Conditional vs. contrast plots</a></li>
+    <li><a href="trans.html">Transformations</a></li>
+    <li><a href="cond.html">Conditioning</a></li>
+    <li><a href="options.html">Graphical options</a></li>
+    <li><a href="gg.html">Visreg and ggplot2</a></li>
+  </ul>
+
+  <ul> <h3>Models with interactions</h3>
+    <li><a href="cross.html">Cross-sectional plots</a></li>
+    <li><a href="overlay.html">Overlay plots</a></li>
+    <li><a href="surface.html">Surface plots</a></li>
+  </ul>
+  
+  <ul> <h3>Special topics</h3>
+    <li><a href="glm.html">GLMs</a></li>
+    <li><a href="blackbox.html">Forests, SVMs, etc.</a></li>
+    <li><a href="mixed.html">Mixed models</a></li>
+    <li><a href="multi.html">Multiple outcomes</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul>
+</div>
+
+      <div id="content">
+        <p><a href="basic.html">Getting started</a> described how <code class="highlighter-rouge">visreg</code> provides a visual summary of a model, somewhat akin to the numerical summary you get from <code class="highlighter-rouge">summary(fit)</code>.  For nonlinear terms, however, it is usually difficult to interpret numerical summaries, and visual representations become far more important.</p>
+
+<h1 id="nonlinear-terms">Nonlinear terms</h1>
+
+<p>For example, suppose we allow the effect of wind on ozone to be nonlinear by introducing a quadratic term into the model:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">Ozone</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">I</span><span class="p">(</span><span class="n">Wind</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/trans-quad-1.png" alt="plot of chunk quad" /></p>
+
+<p>Note that <code class="highlighter-rouge">visreg</code> automatically detects the nonlinear relationship and represents this correctly in the plot.  This should work for any transformation you can think of; here are some examples:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">Ozone</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="o">*</span><span class="n">I</span><span class="p">(</span><span class="n">Wind</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">10</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">print.cond</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/trans-changepoint-1.png" alt="plot of chunk changepoint" /></p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">Ozone</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">poly</span><span class="p">(</span><span class="n">Wind</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/trans-poly-1.png" alt="plot of chunk poly" /></p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">splines</span><span class="p">)</span><span class="w">
+</span><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">Ozone</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ns</span><span class="p">(</span><span class="n">Wind</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">=</span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/trans-spline-1.png" alt="plot of chunk spline" /></p>
+
+<p>If you ever run across a kind of transformation that produces an error in <code class="highlighter-rouge">visreg</code>, <a href="https://github.com/pbreheny/visreg/issues">please tell us about it</a> and we will fix it ASAP.</p>
+
+<h1 id="transformations-of-the-outcome">Transformations of the outcome</h1>
+
+<p>Another kind of nonlinear model arises when the outcome is transformed, but we are interested in plotting the relationship on the original scale.  For example, ozone levels must be positive.  However, as the <a href="index.html#gam">GAM on the front page</a> illustrates, some models may result in predictions or confidence band that fall below 0.  One way of remedying this is to model the log of ozone concentrations instead of the ozone concentrations directly:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">Ozone</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">trans</span><span class="o">=</span><span class="n">exp</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"Ozone"</span><span class="p">,</span><span class="w"> </span><span class="n">partial</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/trans-transout-1.png" alt="plot of chunk transout" /></p>
+
+<p>Note that here, the plotting involves an inverse transformation.  There is no automatic way for <code class="highlighter-rouge">visreg</code> to know what the correct inverse transformation is (except for <a href="glm.html">GLMs</a>), so this must be supplied as a function.</p>
+
+<p>Also note that by default, <code class="highlighter-rouge">visreg</code> turns off partial residuals when <code class="highlighter-rouge">trans</code> is specified, as this can provide a distorted view of outliers (a mild outlier can become an extreme outlier once a transformation has been applied, and vice versa), but we include them here by explicitly specifying <code class="highlighter-rouge">partial=TRUE</code>.  This is discussed in greater depth in the page on <a href="glm.html#scale">GLMs</a>.</p>
+
+<h1 id="combining-nonlinear-terms-with-transformations">Combining nonlinear terms with transformations</h1>
+
+<p>As one would hope, nonlinear terms and outcome transformations can be combined and visualized in a straightforward manner:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">Ozone</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">I</span><span class="p">(</span><span class="n">Wind</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">trans</span><span class="o">=</span><span class="n">exp</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"Ozone"</span><span class="p">,</span><span class="w"> </span><span class="n">partial</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/trans-transboth-1.png" alt="plot of chunk transboth" /></p>
+
+
+      </div>
+    </div>
+
+    <footer id="site-footer">
+
+  <div>
+
+    by <a href="http://myweb.uiowa.edu/pbreheny">Patrick Breheny</a>
+    <div id="last-updated">
+      Last updated: 14 Aug 2020
+      <a href="https://github.com/pbreheny/visreg">
+        <span class="icon  icon--github">
+          <svg viewBox="0 0 16 16">
+            <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+  
+</footer>
+
+
+  </body>
+
+</html>

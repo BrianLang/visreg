@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+
+  <title>visreg</title>
+  <meta name="description" content="visreg: An R package for the visualization of regression models">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <script type="text/javascript" src="js/mathjax.config.js"></script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</head>
+
+
+  <body>
+
+    <header>
+  <div id="site-wrapper">
+    <a id="site-title" href="index.html">visreg</a>
+    <span class="version"> 2.7.0.1 </span>
+    <div id="site-description">
+      An R package for the visualization of regression models
+    </div>
+  </div>
+</header>
+
+
+    <div id="wrapper">
+      <div id="sideBar">
+  
+  <ul> <h3>Basic framework</h3>
+    <li><a href="basic.html">Getting started</a></li>
+    <li><a href="contrast.html">Conditional vs. contrast plots</a></li>
+    <li><a href="trans.html">Transformations</a></li>
+    <li><a href="cond.html">Conditioning</a></li>
+    <li><a href="options.html">Graphical options</a></li>
+    <li><a href="gg.html">Visreg and ggplot2</a></li>
+  </ul>
+
+  <ul> <h3>Models with interactions</h3>
+    <li><a href="cross.html">Cross-sectional plots</a></li>
+    <li><a href="overlay.html">Overlay plots</a></li>
+    <li><a href="surface.html">Surface plots</a></li>
+  </ul>
+  
+  <ul> <h3>Special topics</h3>
+    <li><a href="glm.html">GLMs</a></li>
+    <li><a href="blackbox.html">Forests, SVMs, etc.</a></li>
+    <li><a href="mixed.html">Mixed models</a></li>
+    <li><a href="multi.html">Multiple outcomes</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul>
+</div>
+
+      <div id="content">
+        <ul id="markdown-toc">
+  <li><a href="#q-in-visreg2d-is-it-possible-to-superimpose-data-points-onto-the-plot" id="markdown-toc-q-in-visreg2d-is-it-possible-to-superimpose-data-points-onto-the-plot">Q: In <code class="highlighter-rouge">visreg2d</code>, is it possible to superimpose data points onto the plot?</a></li>
+  <li><a href="#q-does-visreg-work-with-gamm-mgcv-or-gamm4-objects" id="markdown-toc-q-does-visreg-work-with-gamm-mgcv-or-gamm4-objects">Q: Does <code class="highlighter-rouge">visreg</code> work with <code class="highlighter-rouge">gamm</code> (mgcv) or <code class="highlighter-rouge">gamm4</code> objects?</a></li>
+  <li><a href="#q-im-getting-the-following-error-message-error-in-usemethodfamily--no-applicable-method-for-family-applied-to-an-object-of-class-xxxx" id="markdown-toc-q-im-getting-the-following-error-message-error-in-usemethodfamily--no-applicable-method-for-family-applied-to-an-object-of-class-xxxx">Q: I’m getting the following error message: <code class="highlighter-rouge">Error in UseMethod("family") : no applicable method for 'family' applied to an object of class XXXX</code>.</a></li>
+  <li><a href="#q-can-i-have-the-response-variable-on-the-horizontal-axis-instead-of-the-vertical-axis" id="markdown-toc-q-can-i-have-the-response-variable-on-the-horizontal-axis-instead-of-the-vertical-axis">Q: Can I have the response variable on the horizontal axis instead of the vertical axis?</a></li>
+</ul>
+
+<p>This page contains miscellaneous questions that I have been asked about visreg, with answers posted here so that others can read them too.</p>
+
+<h1 id="q-in-visreg2d-is-it-possible-to-superimpose-data-points-onto-the-plot">Q: In <code class="highlighter-rouge">visreg2d</code>, is it possible to superimpose data points onto the plot?</h1>
+
+<p>Yes; it’s probably easiest to do this using <code class="highlighter-rouge">ggplot2</code> to render the surface:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">Ozone</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Temp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">I</span><span class="p">(</span><span class="n">Wind</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">I</span><span class="p">(</span><span class="n">Temp</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">I</span><span class="p">(</span><span class="n">Wind</span><span class="o">*</span><span class="n">Temp</span><span class="p">)</span><span class="o">+</span><span class="n">I</span><span class="p">(</span><span class="n">Wind</span><span class="o">*</span><span class="n">Temp</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> 
+          </span><span class="n">I</span><span class="p">(</span><span class="n">Temp</span><span class="o">*</span><span class="n">Wind</span><span class="o">^</span><span class="m">2</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">I</span><span class="p">(</span><span class="n">Temp</span><span class="o">^</span><span class="m">2</span><span class="o">*</span><span class="n">Wind</span><span class="o">^</span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg2d</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s2">"Temp"</span><span class="p">,</span><span class="w"> </span><span class="n">plot.type</span><span class="o">=</span><span class="s2">"gg"</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w">
+  </span><span class="n">geom_point</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">Wind</span><span class="p">,</span><span class="w"> </span><span class="n">Temp</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">subset</span><span class="p">(</span><span class="n">airquality</span><span class="p">,</span><span class="w"> </span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">Ozone</span><span class="p">)),</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s1">'gray50'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/glm-faq_visreg2d_points_gg-1.png" alt="plot of chunk faq_visreg2d_points_gg" /></p>
+
+<p>You can do it with base R graphics too, but it’s kind of complicated because of how <code class="highlighter-rouge">filled.contour()</code> works and the way in which it actually creates two plots, one main plot and one plot for the legend:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">quote</span><span class="p">({</span><span class="w">
+  </span><span class="n">axis</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mx</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lx</span><span class="p">)</span><span class="w">
+  </span><span class="n">axis</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">my</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ly</span><span class="p">)</span><span class="w">
+  </span><span class="n">with</span><span class="p">(</span><span class="n">airquality</span><span class="p">,</span><span class="w"> </span><span class="n">points</span><span class="p">(</span><span class="n">Wind</span><span class="p">,</span><span class="w"> </span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">19</span><span class="p">))</span><span class="w">
+</span><span class="p">})</span><span class="w">
+</span><span class="n">visreg2d</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="o">=</span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s2">"Temp"</span><span class="p">,</span><span class="w"> </span><span class="n">plot.type</span><span class="o">=</span><span class="s2">"image"</span><span class="p">,</span><span class="w"> </span><span class="n">plot.axes</span><span class="o">=</span><span class="n">p</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/glm-faq_visreg2d_points-1.png" alt="plot of chunk faq_visreg2d_points" /></p>
+
+<p>Doing this through the axes is admittedly very weird – it’s not my idea; see <code class="highlighter-rouge">?filled.contour</code>.</p>
+
+<h1 id="q-does-visreg-work-with-gamm-mgcv-or-gamm4-objects">Q: Does <code class="highlighter-rouge">visreg</code> work with <code class="highlighter-rouge">gamm</code> (mgcv) or <code class="highlighter-rouge">gamm4</code> objects?</h1>
+
+<p>Yes, although it takes a minor workaround since these objects have an unusual structure.  First, let’s simulate some data and fit a model (I’m just using a <code class="highlighter-rouge">tibble</code> here for convenience, it isn’t relevant to the question):</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="n">mgcv</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">tibble</span><span class="p">)</span><span class="w">
+</span><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">20</span><span class="w">
+</span><span class="n">Data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tibble</span><span class="p">(</span><span class="w">
+  </span><span class="n">ID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">factor</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="nb">LETTERS</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="n">n</span><span class="p">],</span><span class="w"> </span><span class="n">each</span><span class="o">=</span><span class="m">5</span><span class="p">)),</span><span class="w">
+  </span><span class="n">x</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="m">5</span><span class="p">),</span><span class="w">
+  </span><span class="n">lp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)[</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">ID</span><span class="p">)]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">x</span><span class="o">^</span><span class="m">2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w">
+  </span><span class="n">p</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">binomial</span><span class="p">()</span><span class="o">$</span><span class="n">linkinv</span><span class="p">(</span><span class="n">lp</span><span class="p">),</span><span class="w">
+  </span><span class="n">y</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">rbinom</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">gamm</span><span class="p">(</span><span class="n">y</span><span class="o">~</span><span class="n">s</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">,</span><span class="w"> </span><span class="n">dist</span><span class="o">=</span><span class="s1">'binomial'</span><span class="p">,</span><span class="w"> </span><span class="n">random</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="n">ID</span><span class="o">=~</span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Now, <code class="highlighter-rouge">fit$gam</code> does not include the call (i.e., <code class="highlighter-rouge">fit$gam$call</code> is <code class="highlighter-rouge">NULL</code>), which means <code class="highlighter-rouge">visreg</code> won’t be able to find the data:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="o">$</span><span class="n">gam</span><span class="p">,</span><span class="w"> </span><span class="s1">'x'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Error in FUN(X[[i]], ...): object 'y' not found
+</code></pre></div></div>
+
+<p>So you have to include it manually:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="o">$</span><span class="n">gam</span><span class="o">$</span><span class="n">data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">Data</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="o">$</span><span class="n">gam</span><span class="p">,</span><span class="w"> </span><span class="s1">'x'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/glm-faq_gamm1-1.png" alt="plot of chunk faq_gamm1" /></p>
+
+<h1 id="q-im-getting-the-following-error-message-error-in-usemethodfamily--no-applicable-method-for-family-applied-to-an-object-of-class-xxxx">Q: I’m getting the following error message: <code class="highlighter-rouge">Error in UseMethod("family") : no applicable method for 'family' applied to an object of class XXXX</code>.</h1>
+
+<p>When you specify <code class="highlighter-rouge">scale='response'</code>, you’re telling <code class="highlighter-rouge">visreg</code> to automatically find the transformation mapping the linear predictor to the scale of the response.  It can only do that if the fitted model object provides that transformation through the <code class="highlighter-rouge">family()</code> method.  Many R models (e.g., <code class="highlighter-rouge">glm</code>) do this, but some (e.g., the <code class="highlighter-rouge">glmmADMB</code> package, <code class="highlighter-rouge">gamm</code> from the <code class="highlighter-rouge">mgcv</code> package) don’t.  If you’re working with one of these models, you’ll have to supply that transformation yourself.  For example, with the model from the previous question, this code fails:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="o">$</span><span class="n">gam</span><span class="p">,</span><span class="w"> </span><span class="s1">'x'</span><span class="p">,</span><span class="w"> </span><span class="n">scale</span><span class="o">=</span><span class="s1">'response'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Error in UseMethod("family"): no applicable method for 'family' applied to an object of class "gam"
+</code></pre></div></div>
+
+<p>Since this is a binomial model with a logistic link, <code class="highlighter-rouge">binomial()$linkinv</code> provides the inverse transformation:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="o">$</span><span class="n">gam</span><span class="p">,</span><span class="w"> </span><span class="s1">'x'</span><span class="p">,</span><span class="w"> </span><span class="n">trans</span><span class="o">=</span><span class="n">binomial</span><span class="p">()</span><span class="o">$</span><span class="n">linkinv</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"Probability"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/glm-faq_gamm2-1.png" alt="plot of chunk faq_gamm2" /></p>
+
+<h1 id="q-can-i-have-the-response-variable-on-the-horizontal-axis-instead-of-the-vertical-axis">Q: Can I have the response variable on the horizontal axis instead of the vertical axis?</h1>
+
+<p>You can achieve this via <code class="highlighter-rouge">ggplot2::coord_flip</code>:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">Ozone</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">gg</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">coord_flip</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/glm-faq_coord_flip-1.png" alt="plot of chunk faq_coord_flip" /></p>
+
+      </div>
+    </div>
+
+    <footer id="site-footer">
+
+  <div>
+
+    by <a href="http://myweb.uiowa.edu/pbreheny">Patrick Breheny</a>
+    <div id="last-updated">
+      Last updated: 14 Aug 2020
+      <a href="https://github.com/pbreheny/visreg">
+        <span class="icon  icon--github">
+          <svg viewBox="0 0 16 16">
+            <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+  
+</footer>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+
+  <title>visreg</title>
+  <meta name="description" content="visreg: An R package for the visualization of regression models">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <script type="text/javascript" src="js/mathjax.config.js"></script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</head>
+
+
+  <body>
+
+    <header>
+  <div id="site-wrapper">
+    <a id="site-title" href="index.html">visreg</a>
+    <span class="version"> 2.7.0.1 </span>
+    <div id="site-description">
+      An R package for the visualization of regression models
+    </div>
+  </div>
+</header>
+
+
+    <div id="wrapper">
+      <div id="sideBar">
+  
+  <ul> <h3>Basic framework</h3>
+    <li><a href="basic.html">Getting started</a></li>
+    <li><a href="contrast.html">Conditional vs. contrast plots</a></li>
+    <li><a href="trans.html">Transformations</a></li>
+    <li><a href="cond.html">Conditioning</a></li>
+    <li><a href="options.html">Graphical options</a></li>
+    <li><a href="gg.html">Visreg and ggplot2</a></li>
+  </ul>
+
+  <ul> <h3>Models with interactions</h3>
+    <li><a href="cross.html">Cross-sectional plots</a></li>
+    <li><a href="overlay.html">Overlay plots</a></li>
+    <li><a href="surface.html">Surface plots</a></li>
+  </ul>
+  
+  <ul> <h3>Special topics</h3>
+    <li><a href="glm.html">GLMs</a></li>
+    <li><a href="blackbox.html">Forests, SVMs, etc.</a></li>
+    <li><a href="mixed.html">Mixed models</a></li>
+    <li><a href="multi.html">Multiple outcomes</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul>
+</div>
+
+      <div id="content">
+        <p>As was the case with <a href="trans.html">nonlinear terms</a>, the relationship between <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> in a model with interactions also (typically) depends on multiple coefficients and thus, a visual summary tends to be much more readily understood than a numeric one.</p>
+
+<p>For models with interactions, we must simultaneously visualize the effect of two explanatory variables.  The <code class="highlighter-rouge">visreg</code> package offers two methods for doing so; this page describes what we call <em>cross-sectional plots</em>, which plot one-dimensional relationships between the response and one predictor for several values of another predictor, either in separate panels or <a href="overlay.html">overlaid on top of one another</a>.  The package also provides methods for constructing <a href="surface.html"><em>surface plots</em></a>, which attempt to provide a picture of the regression surface over both dimensions simultaneously.</p>
+
+<p>Let’s fit a model that involves an interaction between a continuous term and a categorical term:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">airquality</span><span class="o">$</span><span class="n">Heat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cut</span><span class="p">(</span><span class="n">airquality</span><span class="o">$</span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"Cool"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Mild"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Hot"</span><span class="p">))</span><span class="w">
+</span><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">Ozone</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Heat</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>We can then use <code class="highlighter-rouge">visreg</code> to see how the effect of wind on ozone differs depending on the temperature:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-wind_heat-1.png" alt="plot of chunk wind_heat" /></p>
+
+<p>Or alternatively, see how the effect of temperature depends on the wind level:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-heat_wind-1.png" alt="plot of chunk heat_wind" /></p>
+
+<p>Note that, since <code class="highlighter-rouge">Wind</code> is a continuous variable, the panels above are somewhat arbitrary.  By default, <code class="highlighter-rouge">visreg</code> sets up three panels using the 10th, 50th, and 90th percentiles, but <a href="#opt">the user can change both the number and the location of these break points</a>.</p>
+
+<p>By default, <code class="highlighter-rouge">visreg</code> uses the <code class="highlighter-rouge">lattice</code> package to lay out the panels.  Thus, in order to change the appearance of these sorts of plots, you may have to read the <code class="highlighter-rouge">lattice</code> documentation for the relevant options, such as <code class="highlighter-rouge">layout</code> in the above examples.  Alternatively, you can use <a href="gg.html"><code class="highlighter-rouge">ggplot2</code></a> as the graphics engine by specifying <code class="highlighter-rouge">gg=TRUE</code>:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">gg</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-wind_heat_gg-1.png" alt="plot of chunk wind_heat_gg" /></p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">gg</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-heat_wind_gg-1.png" alt="plot of chunk heat_wind_gg" /></p>
+
+<p>In all of these plots, note that each partial residuals appears exactly once in the plot, in the panel it is closest to.</p>
+
+<p><a class="anchor" id="opt"></a></p>
+
+<h1 id="options">Options</h1>
+
+<p>For a numeric <code class="highlighter-rouge">by</code> variable, the <code class="highlighter-rouge">breaks</code> argument controls the values at which the cross-sections are taken. By default, cross-sections are taken at three quantiles (10th, 50th, and 90th), but a larger number can be specified:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="o">=</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-breaks-1.png" alt="plot of chunk breaks" /></p>
+
+<p>If <code class="highlighter-rouge">breaks</code> is a vector of numbers, it specifies the values at which the cross-sections are to be taken:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">15</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">)),</span><span class="w"> </span><span class="n">layout</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-breaks_vec-1.png" alt="plot of chunk breaks_vec" /></p>
+
+<h1 id="graphical-options-lattice">Graphical options: <code class="highlighter-rouge">lattice</code></h1>
+
+<p>As mentioned above, when using <code class="highlighter-rouge">lattice</code> as the graphics engine, the appearance of a plot can typically be changed by specifying the appropriate <code class="highlighter-rouge">lattice</code> option, which gets passed along by <code class="highlighter-rouge">visreg</code>.  One exception is the appearance of lines, points, and bands, which are specified <a href="options.html">just as they are in base plots</a>:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">fill.par</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">"#008DFF33"</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-lattice-1.png" alt="plot of chunk lattice" /></p>
+
+<p>Another exception is the <code class="highlighter-rouge">strip</code> option; <code class="highlighter-rouge">visreg</code> sets up the strip internally, which interferes with the user passing the <code class="highlighter-rouge">strip</code> option along to <code class="highlighter-rouge">lattice</code>.  <code class="highlighter-rouge">visreg</code> does, however, explicitly provide the <code class="highlighter-rouge">strip.names</code> option:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">strip.names</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-strip_true-1.png" alt="plot of chunk strip_true" /></p>
+
+<p>You can also explicitly specify the labels for each strip:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">strip.names</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"Cold days"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Mild days"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Hot days"</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-strip_labs-1.png" alt="plot of chunk strip_labs" /></p>
+
+<p>Other aspects of the strip’s appearance, such as the background color, can be set with calls to the <code class="highlighter-rouge">lattice</code> package’s <code class="highlighter-rouge">trellis.par.set</code>:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">trellis.par.set</span><span class="p">(</span><span class="n">strip.background</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s2">"gray90"</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Error in trellis.par.set(strip.background = list(col = "gray90")): could not find function "trellis.par.set"
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">layout</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-trellis_bkg-1.png" alt="plot of chunk trellis_bkg" /></p>
+
+<h1 id="graphical-options-ggplot2">Graphical options: <code class="highlighter-rouge">ggplot2</code></h1>
+
+<p>As discussed on the <a href="gg.html"><code class="highlighter-rouge">ggplot2</code></a> page, most <code class="highlighter-rouge">ggplot2</code> options are specified via additional components to the plot, such as:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">gg</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">theme_bw</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-gg_theme-1.png" alt="plot of chunk gg_theme" /></p>
+
+<p>The exception, again, is the appearance of points/lines/bands, which are specified with the usual <code class="highlighter-rouge">visreg</code> arguments:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">gg</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">fill.par</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">"#008DFF33"</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/cross-gg_fill-1.png" alt="plot of chunk gg_fill" /></p>
+
+      </div>
+    </div>
+
+    <footer id="site-footer">
+
+  <div>
+
+    by <a href="http://myweb.uiowa.edu/pbreheny">Patrick Breheny</a>
+    <div id="last-updated">
+      Last updated: 14 Aug 2020
+      <a href="https://github.com/pbreheny/visreg">
+        <span class="icon  icon--github">
+          <svg viewBox="0 0 16 16">
+            <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+  
+</footer>
+
+
+  </body>
+
+</html>

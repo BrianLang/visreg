@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+
+  <title>visreg</title>
+  <meta name="description" content="visreg: An R package for the visualization of regression models">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <script type="text/javascript" src="js/mathjax.config.js"></script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</head>
+
+
+  <body>
+
+    <header>
+  <div id="site-wrapper">
+    <a id="site-title" href="index.html">visreg</a>
+    <span class="version"> 2.7.0.1 </span>
+    <div id="site-description">
+      An R package for the visualization of regression models
+    </div>
+  </div>
+</header>
+
+
+    <div id="wrapper">
+      <div id="sideBar">
+  
+  <ul> <h3>Basic framework</h3>
+    <li><a href="basic.html">Getting started</a></li>
+    <li><a href="contrast.html">Conditional vs. contrast plots</a></li>
+    <li><a href="trans.html">Transformations</a></li>
+    <li><a href="cond.html">Conditioning</a></li>
+    <li><a href="options.html">Graphical options</a></li>
+    <li><a href="gg.html">Visreg and ggplot2</a></li>
+  </ul>
+
+  <ul> <h3>Models with interactions</h3>
+    <li><a href="cross.html">Cross-sectional plots</a></li>
+    <li><a href="overlay.html">Overlay plots</a></li>
+    <li><a href="surface.html">Surface plots</a></li>
+  </ul>
+  
+  <ul> <h3>Special topics</h3>
+    <li><a href="glm.html">GLMs</a></li>
+    <li><a href="blackbox.html">Forests, SVMs, etc.</a></li>
+    <li><a href="mixed.html">Mixed models</a></li>
+    <li><a href="multi.html">Multiple outcomes</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul>
+</div>
+
+      <div id="content">
+        <p>Generally speaking, visreg works the same way for GLMs as with any other model:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="p">(</span><span class="s2">"birthwt"</span><span class="p">,</span><span class="w"> </span><span class="n">package</span><span class="o">=</span><span class="s2">"MASS"</span><span class="p">)</span><span class="w">
+</span><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">glm</span><span class="p">(</span><span class="n">low</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">race</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">smoke</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lwt</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">birthwt</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="o">=</span><span class="s2">"binomial"</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"lwt"</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s2">"Mother's weight"</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"Log odds (low birthweight)"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/glm-birthwt-1.png" alt="plot of chunk birthwt" /></p>
+
+<p><a class="anchor" id="scale"></a></p>
+
+<h1 id="scale">Scale</h1>
+
+<p>The unique aspect of GLMs is the link function joining the linear predictors to the response – note that the vertical axis in the above plot is the log-odds of the outcome, not low birthweight itself.  This is the best scale on which to examine residuals and modeling assumption, because, in a sense, it is the scale on which the modeling actually takes place (Mother’s weight is assumed to have a linear form in the model, and the above plot is linear).</p>
+
+<p>For communicating modeling results, however, it is often useful to transform the above outcome to the probability scale.  This can be done by manually specifying <code class="highlighter-rouge">trans</code> as described in <a href="trans.html">transformations</a>, although for GLMs the shortcut <code class="highlighter-rouge">scale="response"</code> is provided:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"lwt"</span><span class="p">,</span><span class="w"> </span><span class="n">scale</span><span class="o">=</span><span class="s2">"response"</span><span class="p">,</span><span class="w"> </span><span class="n">rug</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s2">"Mother's weight"</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s2">"P(low birthweight)"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/glm-birthwt_p-1.png" alt="plot of chunk birthwt_p" /></p>
+
+<h1 id="partial-residuals">Partial residuals</h1>
+
+<p>Note that by default, <code class="highlighter-rouge">visreg</code> switches to a rug display rather than show residuals when a transformation has been applied to the vertical axis.  The reason for this is that residuals are useful to examine on the linear predictor scale, but can be misleading when transformed – a moderate residual can appear huge after a transformation, and vice versa.</p>
+
+<p>To illustrate, suppose we generate some data from a Poisson distribution using a log link:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">50</span><span class="w">
+</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">seq</span><span class="p">(</span><span class="m">-5</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="o">=</span><span class="n">n</span><span class="p">)</span><span class="w">
+</span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rpois</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">lambda</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">exp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>create an artificial outlier:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">y</span><span class="p">[</span><span class="n">which.max</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w">
+</span></code></pre></div></div>
+
+<p>then fit a Poisson regression model:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">glm</span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="o">=</span><span class="n">poisson</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>and visualize with <code class="highlighter-rouge">visreg</code>:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">3</span><span class="p">))</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"x"</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="n">scale</span><span class="o">=</span><span class="s2">"response"</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"x"</span><span class="p">,</span><span class="w"> </span><span class="n">scale</span><span class="o">=</span><span class="s2">"response"</span><span class="p">,</span><span class="w"> </span><span class="n">partial</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/glm-pois_plots-1.png" title="plot of chunk pois_plots" alt="plot of chunk pois_plots" width="100%" /></p>
+
+<p>The default <code class="highlighter-rouge">visreg</code> plot (left) clearly illustrates that 49 of the observations fit the model well, but the 50th is a big outlier.  By transforming to the response scale, we can see the exponential relationship between <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code>.  The third plot, however, is misleading – not only does it indicate that there are several large positive outliers, but it obscures the one actual outlier.</p>
+
+<p>It is worth mentioning that <code class="highlighter-rouge">visreg</code> uses deviance residuals for GLMs and Cox proportional hazards models; these are the most symmetric residuals, and thus, most useful for visually assessing problems with fit.</p>
+
+      </div>
+    </div>
+
+    <footer id="site-footer">
+
+  <div>
+
+    by <a href="http://myweb.uiowa.edu/pbreheny">Patrick Breheny</a>
+    <div id="last-updated">
+      Last updated: 14 Aug 2020
+      <a href="https://github.com/pbreheny/visreg">
+        <span class="icon  icon--github">
+          <svg viewBox="0 0 16 16">
+            <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+  
+</footer>
+
+
+  </body>
+
+</html>

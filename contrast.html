@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+
+  <title>visreg</title>
+  <meta name="description" content="visreg: An R package for the visualization of regression models">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+  <script type="text/javascript" src="js/mathjax.config.js"></script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</head>
+
+
+  <body>
+
+    <header>
+  <div id="site-wrapper">
+    <a id="site-title" href="index.html">visreg</a>
+    <span class="version"> 2.7.0.1 </span>
+    <div id="site-description">
+      An R package for the visualization of regression models
+    </div>
+  </div>
+</header>
+
+
+    <div id="wrapper">
+      <div id="sideBar">
+  
+  <ul> <h3>Basic framework</h3>
+    <li><a href="basic.html">Getting started</a></li>
+    <li><a href="contrast.html">Conditional vs. contrast plots</a></li>
+    <li><a href="trans.html">Transformations</a></li>
+    <li><a href="cond.html">Conditioning</a></li>
+    <li><a href="options.html">Graphical options</a></li>
+    <li><a href="gg.html">Visreg and ggplot2</a></li>
+  </ul>
+
+  <ul> <h3>Models with interactions</h3>
+    <li><a href="cross.html">Cross-sectional plots</a></li>
+    <li><a href="overlay.html">Overlay plots</a></li>
+    <li><a href="surface.html">Surface plots</a></li>
+  </ul>
+  
+  <ul> <h3>Special topics</h3>
+    <li><a href="glm.html">GLMs</a></li>
+    <li><a href="blackbox.html">Forests, SVMs, etc.</a></li>
+    <li><a href="mixed.html">Mixed models</a></li>
+    <li><a href="multi.html">Multiple outcomes</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul>
+</div>
+
+      <div id="content">
+        <p>Conditional plots were discussed in <a href="basic.html">getting started</a>.  The downside of a conditional plot is that all of the terms in the model must be specified – i.e., to plot the relationship between wind and ozone, we also need to specify a value for temperature (or use the median as a default).  Specifically, letting $x$ denote the predictor of interest, $y$ the outcome, and $\xj$ the other predictors in the model, a conditional plot represents the relationship $f(x) = \Ex(Y|x, \xj)$.</p>
+
+<p>As an alternative, we could consider relative changes, or as they are called in statistics, <em>contrasts</em>.  To be specific, let $x_0$ denote a reference value for, e.g., wind, and consider plotting $f(x) = \Ex(Y|x) - \Ex(Y|x_0)$.  Readers who have taken a course in regression will recognize that this is one of the defining characteristics of a <em>regression</em> model: a one-unit change in $x$ has the same effect on $\Ex(Y)$ regardless of what the other terms in the model are.  Models outside the regression framework, such as <a href="blackbox.html">random forests and support vector machines</a>, do not have this property, and therefore, may only be visualized with conditional plots.</p>
+
+<p>To summarize, the primary advantage of a contrast plot is that we don’t have to specify $\xj$, while the primary disadvantage is that we have to specify a reference value $\x_0$.  By default, the reference value in <code class="highlighter-rouge">visreg</code> for a numeric variable is its mean, and for a factor its first, or reference, level.</p>
+
+<p>To see how contrast plots compare to conditional plots, let’s fit the same model as in <a href="basic.html">getting started</a>, but display contrast plots and conditional plots side-by-side:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">airquality</span><span class="o">$</span><span class="n">Heat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">cut</span><span class="p">(</span><span class="n">airquality</span><span class="o">$</span><span class="n">Temp</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="n">labels</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s2">"Cool"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Mild"</span><span class="p">,</span><span class="w"> </span><span class="s2">"Hot"</span><span class="p">))</span><span class="w">
+</span><span class="n">fit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lm</span><span class="p">(</span><span class="n">Ozone</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">Solar.R</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Wind</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Heat</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">airquality</span><span class="p">)</span><span class="w">
+</span><span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">))</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"conditional"</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Wind"</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"contrast"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/contrast-contrast_vs_conditional-1.png" alt="plot of chunk contrast_vs_conditional" /></p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"conditional"</span><span class="p">)</span><span class="w">
+</span><span class="n">visreg</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span><span class="w"> </span><span class="s2">"Heat"</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s2">"contrast"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p><img src="img/contrast-contrast_vs_conditional-2.png" alt="plot of chunk contrast_vs_conditional" /></p>
+
+<p>The similarity between the plots is that the slopes of the lines, and the differences between the levels of <code class="highlighter-rouge">Heat</code>, are exactly the same in both plots.  However, the vertical axes and the confidence intervals are different.  In particular, the confidence interval for a contrast plot has zero width at the reference level: we can say with certainty that $\Ex(Y|x_0) - \Ex(Y|x_0)=0$.  There is always uncertainty, however, about the actual value of $\Ex(Y)$ in a conditional plot for all values of $x$.  Likewise, at the mean value of wind, 9.96, the contrast plot passes through 0 by construction, wheras the conditional plot passes through 34.6.</p>
+
+<p>Furthermore, even where both confidence intervals have nonzero width, they do not have the same width, because they represent different things.  For example, the width of the confidence interval for <code class="highlighter-rouge">Mild</code> heat is wider for the contrast plot than it is for the conditional plot: there is less uncertainty about the expected value of ozone on a mild day than there is about the difference in expected values between mild and cool days.</p>
+
+<p>In these documentation pages, we focus primarily on conditional plots to avoid duplication, but all of the options and ideas we discuss carry over to contrast plots as well.  It is worth noting, however, that there are three situations in particular where contrast plots are very useful:</p>
+
+<ul>
+  <li>Logistic regression applied to case-control studies: In such studies, the estimation of the intercept parameter is typically meaningless, so conditional plots are of questionable value.  Contrast plots, however, are still meaningful ways to visualize the model’s estimates.</li>
+  <li>Cox relative risk (proportional hazards) models: Likewise, in Cox models, the baseline hazard is not estimated and plots of absolute risk are dubious, but contrast plots still useful.</li>
+  <li><a href="mixed.html">Random effect models</a>: Most random effect modeling software cannot account for uncertainty in the random effects when calculating standard errors for $\Ex(Y)$.  Thus, while conditional plots may still be constructed, they will lack confidence intervals.  In contrast plots, these terms drop out, and confidence intervals may still be constructed.</li>
+</ul>
+
+      </div>
+    </div>
+
+    <footer id="site-footer">
+
+  <div>
+
+    by <a href="http://myweb.uiowa.edu/pbreheny">Patrick Breheny</a>
+    <div id="last-updated">
+      Last updated: 14 Aug 2020
+      <a href="https://github.com/pbreheny/visreg">
+        <span class="icon  icon--github">
+          <svg viewBox="0 0 16 16">
+            <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+  </div>
+  
+</footer>
+
+
+  </body>
+
+</html>
