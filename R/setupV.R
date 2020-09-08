@@ -1,7 +1,7 @@
 # v is a list of three elements: fit, res, and meta
 # alternatively (class "visregList"), a list of visreg elements
 
-setupV <- function(fit, f, xvar, nn, cond, type, trans, xtrans, alpha, jitter, by, yName, ...) {
+setupV <- function(fit, f, xvar, nn, cond, type, trans, xtrans, alpha, jitter, by, yName, forcexvalues, ...) {
   
   # Initial setup
   if (length(xvar) > 1 & length(cond) > 1) stop("Cannot specify 'by' and multiple x variables simultaneously", call.=FALSE)
@@ -15,7 +15,7 @@ setupV <- function(fit, f, xvar, nn, cond, type, trans, xtrans, alpha, jitter, b
   for (j in 1:J) {
     cond.j <- if (length(cond) > 1) cond[[j]] else cond[[1]]
     name <- if (length(xvar) > 1) xvar[j] else xvar
-    xy[[j]] <- getXY(fit, f, name, nn, cond.j, type, trans, xtrans, alpha, jitter, ...)
+    xy[[j]] <- getXY(fit, f, name, nn, cond.j, type, trans, xtrans, alpha, jitter, forcexvalues, ...)
   }
   if (!missing(by)) xy <- subsetV(xy, f, by, lev, type)
 

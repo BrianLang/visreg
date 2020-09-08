@@ -1,4 +1,4 @@
-setupD <- function(fit, f, name, nn, cond, whitespace, ...) {
+setupD <- function(fit, f, name, nn, cond, forcexvalues, whitespace, ...) {
   ## Set up n-row data frame for residuals
   x <- f[, name]
   xdf <- data.frame(x)
@@ -19,7 +19,7 @@ setupD <- function(fit, f, name, nn, cond, whitespace, ...) {
   if (is.factor(x)) {
     xx <- factor(levels(x), levels=levels(x))
   } else {
-    xx <- seq(min(x), max(x), length=nn)
+    xx <- sort(c(seq(min(x), max(x), length=nn), forcexvalues))
   }
   xxdf <- data.frame(xx)
   names(xxdf) <- name

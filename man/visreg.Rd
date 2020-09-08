@@ -123,6 +123,11 @@ nn=101, cond=list(), jitter=FALSE, collapse=FALSE, plot=TRUE, ...)
     Send the calculations to \code{\link{plot.visreg}}?  Default is
     TRUE.
   }
+  
+  \item{forcexvalues}{
+    Include a set of x values that you want to have in the fit object. Mostly useful if you want to extract and 
+    use the calculated table as well as the plot. 
+  }
 
   \item{\dots}{
     Graphical parameters (e.g., \code{ylab}) can be passed to the

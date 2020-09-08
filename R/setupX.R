@@ -1,4 +1,4 @@
-setupX <- function(fit, f, name, nn, cond, ...) {
+setupX <- function(fit, f, name, nn, cond, forcexvalues, ...) {
   ## Set up n x p matrix for (conditional) partial residuals
   x <- f[, name]
   if (is.factor(x)) {
@@ -25,7 +25,7 @@ setupX <- function(fit, f, name, nn, cond, ...) {
   df <- fillFrame(f, xdf, cond)
   D <- rbind(f[, names(df)], df)
   form <- formula(fit)[3]
-
+  
   if (inherits(fit, "lme")) {
     b <- nlme::fixed.effects(fit)
   } else if (inherits(fit, "merMod")) {
@@ -33,7 +33,7 @@ setupX <- function(fit, f, name, nn, cond, ...) {
   } else {
     b <- coef(fit)
   }
-
+  
   if (inherits(fit, "mlm")) {
     ind <- apply(is.finite(b), 1, all)
     if (!identical(ind, apply(is.finite(b), 1, any))) stop("Inconsistent NA/NaN coefficients across outcomes", call.=FALSE)
@@ -53,13 +53,13 @@ setupX <- function(fit, f, name, nn, cond, ...) {
     X. <- model.matrix(as.formula(paste("~", form)), D)[-(1:nrow(f)), ind]
   }
   X <- t(t(X.[-1,])-X.[1,])
-
+  
   ## Set up data frame with nn rows for prediction
   dots <- list(...)
   if (is.factor(x)) {
     xx <- factor(c(xref, 1:length(levels(x))), labels=levels(x))
   } else {
-    xx <- c(xref, seq(min(x), max(x), length=nn))
+    xx <- c(xref, sort(c(seq(min(x), max(x), length=nn), forcexvalues)))
   }
   xxdf <- data.frame(xx)
   names(xxdf) <- name
@@ -72,7 +72,7 @@ setupX <- function(fit, f, name, nn, cond, ...) {
     XX. <- model.matrix(RHS, DD)[-(1:nrow(f)), ind]
   } else XX. <- model.matrix(as.formula(paste("~", form)), DD)[-(1:nrow(f)), ind]
   XX <- t(t(XX.[-1,])-XX.[1,])
-
+  
   ## Remove extraneous columns for coxph
   if (inherits(fit, "coxph")) {
     remove.xx <- c(grep("(Intercept)", colnames(XX), fixed=TRUE),
