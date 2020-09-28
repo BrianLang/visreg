@@ -1,6 +1,6 @@
-\name{visreg-package}
-\alias{visreg.package}
-\alias{visreg-package}
+\name{visreg_brian-package}
+\alias{visreg_brian.package}
+\alias{visreg_brian-package}
 \docType{package}
 \title{Visualization of regression models}
 \description{\code{visreg} provides a number of plotting functions for
