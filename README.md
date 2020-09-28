@@ -13,5 +13,5 @@ install.packages("visreg")
 To install the latest development version from GitHub:
 
 ```r
-remotes::install_github("brianlang/visreg")
+remotes::install_github("brianlang/visreg_brian")
 ```
